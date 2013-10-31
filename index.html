@@ -12,7 +12,11 @@ and open the template in the editor.
     <body onload="carregaCategorias()">
         
         <div>
-             <select id="categorias"></select>
+            <select id="categorias" onchange="carregaLivros()">
+                 <option>Escolha uma opção</option>
+             </select>
+        </div>
+        <div id="livros"> 
         </div>
     </body>
 </html>
