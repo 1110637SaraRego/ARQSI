@@ -57,12 +57,13 @@ function carregaLivros()
 {  
     //vai buscar a categoria selecionada
     var categoria = document.getElementById("categorias").childNodes[document.getElementById("categorias").selectedIndex + 2].firstChild.nodeValue;
+    var num = document.getElementById("numLivros").value;
     xmlHttpObj = CreateXmlHttpRequestObject();
 
     if (xmlHttpObj)
     {
         // Definição do URL para efectuar pedido HTTP - método GET
-        xmlHttpObj.open("GET", "b.php?categoria=" + categoria, true);
+        xmlHttpObj.open("GET", "b.php?categoria=" + categoria + "&num=" + num, true);
 
         // Registo do EventHandler
         xmlHttpObj.onreadystatechange = adicionaLivros;
@@ -75,8 +76,12 @@ function adicionaLivros() {
     if (xmlHttpObj.readyState == 4 && xmlHttpObj.status == 200) // resposta do servidor completa
     {
         // propriedade responseXML que devolve a resposta do servidor
-        var docxml = xmlHttpObj.responseXML;
+        div = document.getElementById('livros')
+        while (div.childNodes.length !== 0){
+        div.removeChild(div.firstChild);
+        }
         
+        var docxml = xmlHttpObj.responseXML;
         
         var livros = docxml.getElementsByTagName("title");
         
