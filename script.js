@@ -16,19 +16,42 @@ function CreateXmlHttpRequestObject( )
     return xmlHttpObj;
 }
 
+ function MakeXMLHTTPCall(param)
+{     
+	xmlHttpObj = CreateXmlHttpRequestObject();
+
+	if (xmlHttpObj)
+	{
+		// Definição do URL para efectuar pedido HTTP - método GET
+		// Registo do EventHandler
+		if(param === 0){
+			xmlHttpObj.open("GET", "a.php", true);
+			
+			xmlHttpObj.onreadystatechange = adicionaCategorias;
+		}
+		if(param === 1){
+			//vai buscar a categoria selecionada
+			var categoria = document.getElementById("categorias").childNodes[document.getElementById("categorias").selectedIndex + 2].firstChild.nodeValue;
+			var num = document.getElementById("numLivros").value;
+			
+			xmlHttpObj.open("GET", "b.php?categoria=" + categoria + "&num=" + num, true);
+			xmlHttpObj.onreadystatechange = adicionaLivros;
+		}
+		if(param === 2){
+			var n = document.getElementById("n_livros_editora").value;
+			xmlHttpObj.open("GET", "c.php?n=" + n, true);
+			n.value="";
+			
+			xmlHttpObj.onreadystatechange = listaNLivrosEditora;
+		}
+		xmlHttpObj.send(null);
+	 }
+
+}
+
 function carregaCategorias()
 {
-    xmlHttpObj = CreateXmlHttpRequestObject();
-
-    if (xmlHttpObj)
-    {
-        // Definição do URL para efectuar pedido HTTP - método GET
-        xmlHttpObj.open("GET", "a.php", true);
-
-        // Registo do EventHandler
-        xmlHttpObj.onreadystatechange = adicionaCategorias;
-        xmlHttpObj.send(null);
-    }
+        MakeXMLHTTPCall(0);
 }
 
 function adicionaCategorias() {
@@ -55,20 +78,8 @@ function adicionaCategorias() {
 
 function carregaLivros()
 {  
-    //vai buscar a categoria selecionada
-    var categoria = document.getElementById("categorias").childNodes[document.getElementById("categorias").selectedIndex + 2].firstChild.nodeValue;
-    var num = document.getElementById("numLivros").value;
-    xmlHttpObj = CreateXmlHttpRequestObject();
-
-    if (xmlHttpObj)
-    {
-        // Definição do URL para efectuar pedido HTTP - método GET
-        xmlHttpObj.open("GET", "b.php?categoria=" + categoria + "&num=" + num, true);
-
-        // Registo do EventHandler
-        xmlHttpObj.onreadystatechange = adicionaLivros;
-        xmlHttpObj.send(null);
-    }
+	MakeXMLHTTPCall(1);
+    
 }
 
 function adicionaLivros() {
@@ -99,3 +110,46 @@ function adicionaLivros() {
     }
 
 }
+
+/** alinea c) **/
+
+
+function nLivrosEditora(){
+	MakeXMLHTTPCall(2);
+	
+}
+
+function listaNLivrosEditora(){
+	
+	if (xmlHttpObj.readyState == 4 && xmlHttpObj.status == 200) // resposta do servidor completa
+    {
+        // propriedade responseXML que devolve a resposta do servidor
+		var vec = xmlHttpObj.responseText.split(":");
+		listaLivros(vec);
+		
+	}
+}
+function listaLivros(vec)
+{
+	var x = document.getElementById("livros");
+	// apagar anteriores
+	while (x.firstChild) {
+		x.removeChild(x.firstChild);
+	}
+	
+	for(var i=1;i<vec.length;i++){
+		var editora = document.createTextNode("Editora " + vec[i].charAt(0) + ":");
+		x.appendChild(editora);
+		x.appendChild(document.createElement("br"));
+		var livros = vec[i].split(',');
+		livros[0] = livros[0].slice(1,livros[0].length);//remove 1o char
+		for(var j = 0; j < livros.length; j++){
+			var link = document.createElement("a");
+			link.appendChild(document.createTextNode(livros[j]));
+			link.setAttribute("href","");
+			link.setAttribute("onclick","return false");
+			x.appendChild(link); 
+			x.appendChild(document.createElement("br"));
+		}
+	}
+    }
