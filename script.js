@@ -40,7 +40,6 @@ function CreateXmlHttpRequestObject( )
 		if(param === 2){
 			var n = document.getElementById("n_livros_editora").value;
 			xmlHttpObj.open("GET", "c.php?n=" + n, true);
-			n.value="";
 			
 			xmlHttpObj.onreadystatechange = listaNLivrosEditora;
 		}
@@ -60,8 +59,6 @@ function adicionaCategorias() {
     {
         // propriedade responseXML que devolve a resposta do servidor
         var docxml = xmlHttpObj.responseXML;
-        
-        
         var categorias = docxml.getElementsByTagName("categoria");
         
         for(var a=0;a<categorias.length;a++){
@@ -86,27 +83,18 @@ function adicionaLivros() {
 
     if (xmlHttpObj.readyState == 4 && xmlHttpObj.status == 200) // resposta do servidor completa
     {
-        // propriedade responseXML que devolve a resposta do servidor
-        div = document.getElementById('livros')
-        while (div.childNodes.length !== 0){
-        div.removeChild(div.firstChild);
-        }
-        
         var docxml = xmlHttpObj.responseXML;
-        
+        limpaLista("livros");
         var livros = docxml.getElementsByTagName("title");
-        
-        for(var a=0;a<livros.length;a++){
-            var livro = livros[a].firstChild.nodeValue;
-            var option = document.createElement("a");
-            option.appendChild(document.createTextNode(livro));
-            option.setAttribute("href","");
-            option.setAttribute("onclick","return false");
-            document.getElementById("livros").appendChild(option); 
-            document.getElementById("livros").appendChild(document.createElement("br"));
-        }
-        
-        
+		for(var a=0;a<livros.length;a++){
+			var livro = livros[a].firstChild.nodeValue;
+			var link = document.createElement("a");
+			link.appendChild(document.createTextNode(livro));
+			link.setAttribute("href","javascript:void(0)");
+			link.setAttribute("onClick","infoAdiciona( this.firstChild.nodeValue)");
+			document.getElementById("livros").appendChild(link); 
+			document.getElementById("livros").appendChild(document.createElement("br"));
+		}
     }
 
 }
@@ -124,32 +112,74 @@ function listaNLivrosEditora(){
 	if (xmlHttpObj.readyState == 4 && xmlHttpObj.status == 200) // resposta do servidor completa
     {
         // propriedade responseXML que devolve a resposta do servidor
-		var vec = xmlHttpObj.responseText.split(":");
-		listaLivros(vec);
+		var xml = xmlHttpObj.responseXML;
 		
+		limpaLista("livros");
+		var editoras = xml.getElementsByTagName("editora");
+		var length = editoras.length;//numero de editoras
+		for(var i = 0; i < length; i++){
+			var livros = editoras[i].getElementsByTagName("title");
+			var len = livros.length;//numero de titulos numa editora
+			if(len != 0){
+				document.getElementById("livros").appendChild(document.createTextNode("Editora " + (i+1)));
+				document.getElementById("livros").appendChild(document.createElement("br"));
+				for(var a=0;a<livros.length;a++){
+					var livro = livros[a].firstChild.nodeValue;
+					var link = document.createElement("a");
+					link.appendChild(document.createTextNode(livro));
+					link.setAttribute("href","javascript:void(0)");
+					link.setAttribute("onClick","infoAdiciona(this.firstChild.nodeValue)");
+					document.getElementById("livros").appendChild(link); 
+					document.getElementById("livros").appendChild(document.createElement("br"));
+				}
+			}
+		}		
 	}
 }
-function listaLivros(vec)
-{
-	var x = document.getElementById("livros");
+
+function infoAdiciona(livro){
+	xmlHttpObj = CreateXmlHttpRequestObject();
+	if (xmlHttpObj)
+	{
+		xmlHttpObj.onreadystatechange=function(){
+			if (xmlHttpObj.readyState==4 && xmlHttpObj.status==200)
+			{
+				var xml = xmlHttpObj.responseXML;
+				var book = xml.getElementsByTagName("book")[0].childNodes;
+				var divinfo = document.getElementById("info");
+				limpaLista("info");
+				divinfo.style.display = 'block';
+				var table = divinfo.appendChild(document.createElement("table"));
+				table.setAttribute("border","1");
+				
+				var row1 = document.createElement("tr");
+				var row2 = document.createElement("tr");
+				for(var i = 0; i < 5; i++){
+					var text1 = document.createTextNode(book.item(i).nodeName);
+					var header = document.createElement("th");
+					header.appendChild(text1);
+					row1.appendChild(header);
+					
+					var text2 = document.createTextNode(book.item(i).textContent);
+					var info = document.createElement("td");
+					info.appendChild(text2);
+					row2.appendChild(info);
+				}
+				table.appendChild(row1);
+				table.appendChild(row2);
+			}
+		}
+		xmlHttpObj.open("GET","getInfo.php?livro="+livro,true);
+		xmlHttpObj.send();
+	}
+}
+
+
+/**Apaga elemento*/
+function limpaLista(elemento){
+	var x = document.getElementById(elemento);
 	// apagar anteriores
 	while (x.firstChild) {
 		x.removeChild(x.firstChild);
 	}
-	
-	for(var i=1;i<vec.length;i++){
-		var editora = document.createTextNode("Editora " + vec[i].charAt(0) + ":");
-		x.appendChild(editora);
-		x.appendChild(document.createElement("br"));
-		var livros = vec[i].split(',');
-		livros[0] = livros[0].slice(1,livros[0].length);//remove 1o char
-		for(var j = 0; j < livros.length; j++){
-			var link = document.createElement("a");
-			link.appendChild(document.createTextNode(livros[j]));
-			link.setAttribute("href","");
-			link.setAttribute("onclick","return false");
-			x.appendChild(link); 
-			x.appendChild(document.createElement("br"));
-		}
-	}
-    }
+}

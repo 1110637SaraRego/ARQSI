@@ -8,20 +8,54 @@ and open the template in the editor.
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="script.js"></script>
+		<style type="text/css">
+			.rotulo{text-align:right}
+			.tableform { margin-left: auto;
+					   margin-right: auto;
+			}
+		</style>
     </head>
     <body onload="carregaCategorias()">
-        
-        <div>
-            <select id="categorias" onchange="carregaLivros()"> 
-                 <option>Escolha uma opção</option>
-             </select>
-        </div>
-        <br>
-        <div>
-            <input type="text" id="numLivros" placeholder="Quantos livros?" onchange="carregaLivros()">
-        </div>
-        <br>
-        <div id="livros"> 
-        </div>
+	<div>
+    <table cellpadding="5">
+		<tr>
+			<td class="rotulo">
+				Categoria:
+			</td>
+			<td>
+				<div>
+					<select id="categorias">
+						 <option>Escolha uma opção</option>
+					</select>
+				</div>
+				
+			</td>
+		</tr>
+		<tr>
+			<td class="rotulo">
+				Nº de livros a apresentar:
+			</td>
+			<td>
+				<input type="text" id="numLivros" placeholder="Quantos livros?" onchange="carregaLivros()">
+			</td>
+		</tr>
+		<tr>
+			<td class="rotulo">
+				N primeiros livros:
+			</td>
+			<td>
+				<input name="n_livros_editora" id="n_livros_editora" size="5" type="text" onchange="nLivrosEditora()">
+			</td>
+		</tr>
+	</table>
+	</div>
+	<p><br/>Resultados:</p>
+	<div id="livros"> 
+	</div>
+	<div id = "info"  style="display: none;"> 
+	</div>
+		
     </body>
 </html>
+
+
