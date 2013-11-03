@@ -90,8 +90,8 @@ function adicionaLivros() {
 			var livro = livros[a].firstChild.nodeValue;
 			var link = document.createElement("a");
 			link.appendChild(document.createTextNode(livro));
-			link.setAttribute("href","getInfo.php?livro="+livro);
-			link.setAttribute("onclick", infoAdicional(this.value));
+			link.setAttribute("href","javascript:void(0)");
+			link.setAttribute("onClick","infoAdiciona( this.firstChild.nodeValue)");
 			document.getElementById("livros").appendChild(link); 
 			document.getElementById("livros").appendChild(document.createElement("br"));
 		}
@@ -128,7 +128,7 @@ function listaNLivrosEditora(){
 					var link = document.createElement("a");
 					link.appendChild(document.createTextNode(livro));
 					link.setAttribute("href","javascript:void(0)");
-					link.setAttribute("onClick","infoAdicional(this.value)");
+					link.setAttribute("onClick","infoAdiciona(this.firstChild.nodeValue)");
 					document.getElementById("livros").appendChild(link); 
 					document.getElementById("livros").appendChild(document.createElement("br"));
 				}
@@ -137,7 +137,7 @@ function listaNLivrosEditora(){
 	}
 }
 
-function infoAdicional(livro){
+function infoAdiciona(livro){
 	xmlHttpObj = CreateXmlHttpRequestObject();
 	if (xmlHttpObj)
 	{
@@ -145,24 +145,28 @@ function infoAdicional(livro){
 			if (xmlHttpObj.readyState==4 && xmlHttpObj.status==200)
 			{
 				var xml = xmlHttpObj.responseXML;
-                                //informaçao sobre o livro
 				var book = xml.getElementsByTagName("book")[0].childNodes;
-                                //div onde colocar informaçao
 				var divinfo = document.getElementById("info");
-                                //unhide
+				limpaLista("info");
 				divinfo.style.display = 'block';
-                                //cria table 
 				var table = divinfo.appendChild(document.createElement("table"));
-				var row1 = table.appendChild(document.createElement("tr"));
-				var row2 = table.appendChild(document.createElement("tr"));
+				table.setAttribute("border","1");
+				
+				var row1 = document.createElement("tr");
+				var row2 = document.createElement("tr");
 				for(var i = 0; i < 5; i++){
-					var  x = book.item(i);
-					var header = row1.appendChild(document.createElement("th", x.nodeName));
+					var text1 = document.createTextNode(book.item(i).nodeName);
+					var header = document.createElement("th");
+					header.appendChild(text1);
 					row1.appendChild(header);
-					var info = row2.appendChild(document.createElement("td", x.nodeValue));
+					
+					var text2 = document.createTextNode(book.item(i).textContent);
+					var info = document.createElement("td");
+					info.appendChild(text2);
 					row2.appendChild(info);
 				}
-				
+				table.appendChild(row1);
+				table.appendChild(row2);
 			}
 		}
 		xmlHttpObj.open("GET","getInfo.php?livro="+livro,true);
