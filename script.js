@@ -33,15 +33,19 @@ function CreateXmlHttpRequestObject( )
 			//vai buscar a categoria selecionada
 			var categoria = document.getElementById("categorias").childNodes[document.getElementById("categorias").selectedIndex + 2].firstChild.nodeValue;
 			var num = document.getElementById("numLivros").value;
-			
-			xmlHttpObj.open("GET", "b.php?categoria=" + categoria + "&num=" + num, true);
-			xmlHttpObj.onreadystatechange = adicionaLivros;
+			if(!isNaN(num)){
+				xmlHttpObj.open("GET", "b.php?categoria=" + categoria + "&num=" + num, true);
+				xmlHttpObj.onreadystatechange = adicionaLivros;
+			}
 		}
 		if(param === 2){
 			var n = document.getElementById("n_livros_editora").value;
-			xmlHttpObj.open("GET", "c.php?n=" + n, true);
+			if(!isNaN(n)){
+				xmlHttpObj.open("GET", "c.php?n=" + n, true);
 			
-			xmlHttpObj.onreadystatechange = listaNLivrosEditora;
+				xmlHttpObj.onreadystatechange = listaNLivrosEditora;
+			}
+			document.getElementById("n_livros_editora").value = '';
 		}
 		xmlHttpObj.send(null);
 	 }
@@ -116,12 +120,15 @@ function listaNLivrosEditora(){
 		
 		limpaLista("livros");
 		var editoras = xml.getElementsByTagName("editora");
+		var editora=document.getElementById("editoras").options;
+		var index = document.getElementById("editoras").selectedIndex;
+		
 		var length = editoras.length;//numero de editoras
-		for(var i = 0; i < length; i++){
-			var livros = editoras[i].getElementsByTagName("title");
+		//for(var i = 0; i < length; i++){
+			var livros = editoras[index].getElementsByTagName("title");
 			var len = livros.length;//numero de titulos numa editora
 			if(len != 0){
-				document.getElementById("livros").appendChild(document.createTextNode("Editora " + (i+1)));
+				document.getElementById("livros").appendChild(document.createTextNode("Editora " + (index+1)));
 				document.getElementById("livros").appendChild(document.createElement("br"));
 				for(var a=0;a<livros.length;a++){
 					var livro = livros[a].firstChild.nodeValue;
@@ -133,7 +140,7 @@ function listaNLivrosEditora(){
 					document.getElementById("livros").appendChild(document.createElement("br"));
 				}
 			}
-		}		
+		//}		
 	}
 }
 
@@ -168,7 +175,7 @@ function infoAdiciona(livro){
 				table.appendChild(row1);
 				table.appendChild(row2);
 			}
-		}
+		};
 		xmlHttpObj.open("GET","getInfo.php?livro="+livro,true);
 		xmlHttpObj.send();
 	}
