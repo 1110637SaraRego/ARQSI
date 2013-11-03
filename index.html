@@ -1,13 +1,11 @@
-<!--
-To change this template, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
     <head>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="script.js"></script>
+        <script type="text/javascript" src="script.js">
+		
+		</script>
 		<style type="text/css">
 			.rotulo{text-align:right}
 			.tableform { margin-left: auto;
@@ -24,7 +22,7 @@ and open the template in the editor.
 			</td>
 			<td>
 				<div>
-					<select id="categorias" onchange="carregaLivros()">
+					<select id="categorias">
 						 <option>Escolha uma opção</option>
 					</select>
 				</div>
@@ -40,11 +38,14 @@ and open the template in the editor.
 			</td>
 		</tr>
 		<tr>
-			<td class="rotulo">
-				N primeiros livros:
+			<td class="rotulo">Ecolha Editora
+				<select id="editoras">
+						 <option>Editora1</option>
+						 <option>Editora2</option>
+				</select>
 			</td>
 			<td>
-				<input name="n_livros_editora" id="n_livros_editora" size="5" type="text" onchange="nLivrosEditora()">
+				<input type="text" id="n_livros_editora" placeholder="Quantos livros?" onchange="nLivrosEditora()">
 			</td>
 		</tr>
 	</table>
