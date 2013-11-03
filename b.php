@@ -46,7 +46,7 @@ echo "<book>";
 //    $num = sizeof($array);
 //}
 
-if($num == "todos" | $num == "Todos"){
+if($num == "todos" | $num == "Todos" | $num == ""){
     $num = sizeof($array);
 }
 
@@ -56,6 +56,6 @@ for($i=0;$i<$num;$i++){
 
 echo "</book>";
 
-
+include 'e.php';
 
 ?>

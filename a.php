@@ -40,4 +40,6 @@ for($i=0;$i<sizeof($array);$i++){
 }
 
 echo "</categorias>";
+
+include 'e.php';
 ?>
